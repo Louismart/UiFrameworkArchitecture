@@ -1,0 +1,326 @@
+// Framework configuration
+plugins {
+    id 'java'
+    id 'idea'
+    id "io.freefair.lombok" version "5.3.0"
+    id "io.qameta.allure" version "2.8.1"
+    id "com.gtramontina.ghooks.gradle" version "1.1.1"
+    id "aspectj.gradle" version "0.1.6" apply false
+    id 'org.gradle.test-retry' version '1.5.2'
+    id "com.github.davidmc24.gradle.plugin.avro" version "1.2.0"
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+group ''
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 11
+final Selenoid = "Selenoid"
+
+ext {
+    aeonbitsOwnerVersion = '1.0.12'
+    allureVersion = '2.20.0'
+    apacheHttpClientVersion = '4.5.14'
+    apacheTika = '2.6.0'
+    ashotVersion = '1.5.4'
+    aspectjVersion = '1.9.6'
+    assertjVersion = '3.24.2'
+    commonsCodecVersion = '1.15'
+    commonsValidatorVersion = '1.7'
+    hamcrestVersion = '2.2'
+    jacksonVersion = '2.14.0'
+    javaxActivationVersion = '1.2.0'
+    javaFakerVersion = '1.0.2'
+    jaxbVersion = '2.3.0'
+    junitJupiterVersion = '5.9.0'
+    junitLauncherVersion = '1.9.0'
+    mockitoVersion = '4.8.0'
+    schemaorgVersion = '1.0.1'
+    selenideSelenoidPluginVersion = '2.3.3'
+    selenideVersion = '6.12.3'
+    wiremockVersion = '2.27.2'
+    slf4jVersion = '2.0.5'
+    openCsvVersion = '5.7.1'
+    jedisVersion = '4.3.1'
+    libphonenumberVersion = '8.13.2'
+    avroVersion = '1.11.0'
+    kafkaavroserializerVersion = '5.5.0'
+    fabric8Version = '6.3.0'
+    americanExpressNodesVersion = '0.5.0'
+    frameworkProperties = configureFramework()
+    if (needSelenoid()) {
+        println("> Selenoid requested in properties file!")
+    }
+    if (needMoon()) {
+        println("> Moon requested in properties file!")
+    }
+    validateMoon()
+}
+
+allure {
+    autoconfigure = true
+    version = "${allureVersion}"
+    configuration = 'compile'
+    useJUnit5 {
+        version = "${allureVersion}"
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://packages.confluent.io/maven/' }
+    maven { url 'https://nexus-dev.wremitshared.com/repository/maven-releases/' }
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+    testRuntimeOnly "org.slf4j:slf4j-simple:${slf4jVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.selenide:selenide-selenoid:${selenideSelenoidPluginVersion}"
+    testImplementation "com.github.tomakehurst:wiremock:${wiremockVersion}"
+    testImplementation "org.junit.platform:junit-platform-launcher:${junitLauncherVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testImplementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    testImplementation "com.sun.activation:javax.activation:${javaxActivationVersion}"
+    testImplementation "org.aeonbits.owner:owner:${aeonbitsOwnerVersion}"
+    testImplementation "com.sun.xml.bind:jaxb-core:${jaxbVersion}"
+    testImplementation "com.sun.xml.bind:jaxb-impl:${jaxbVersion}"
+    testImplementation "javax.xml.bind:jaxb-api:${jaxbVersion}"
+    testImplementation "commons-codec:commons-codec:${commonsCodecVersion}"
+    testImplementation "commons-validator:commons-validator:${commonsValidatorVersion}"
+    testImplementation "org.apache.httpcomponents:httpclient:${apacheHttpClientVersion}"
+    testImplementation "org.apache.tika:tika-core:${apacheTika}"
+    testImplementation "com.codeborne:selenide:${selenideVersion}"
+    testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
+    testImplementation "org.hamcrest:hamcrest-library:${hamcrestVersion}"
+    testImplementation "io.qameta.allure:allure-junit5:${allureVersion}"
+    testImplementation "io.qameta.allure:allure-selenide:${allureVersion}"
+    testImplementation "io.qameta.allure:allure-httpclient:${allureVersion}"
+    testImplementation "org.aspectj:aspectjweaver:${aspectjVersion}"
+    testImplementation "ru.yandex.qatools.ashot:ashot:${ashotVersion}"
+    testImplementation "com.github.mautini:schemaorg-java:${schemaorgVersion}"
+    testImplementation "com.github.javafaker:javafaker:${javaFakerVersion}"
+    testImplementation "com.opencsv:opencsv:${openCsvVersion}"
+    testImplementation "redis.clients:jedis:${jedisVersion}"
+    testImplementation "com.googlecode.libphonenumber:libphonenumber:${libphonenumberVersion}"
+    testImplementation "org.apache.avro:avro:${avroVersion}"
+    testImplementation "io.confluent:kafka-avro-serializer:${kafkaavroserializerVersion}"
+    testImplementation "io.fabric8:kubernetes-client:${fabric8Version}"
+    
+
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+Map configureFramework() {
+    def frameworkProperties = new Properties()
+    file("src/test/resources/${readExecutionEnvironment()}.properties").withInputStream {
+        stream -> frameworkProperties.load(stream)
+    }
+
+    return frameworkProperties
+}
+
+/**
+ * Resolves required execution environment. Order goes as follows:
+ *    * -Penv=XXX param to gradlew, OR
+ *    * 'env=XXX' environment variable, OR
+ *    * default value
+ *
+ * @return name of environment to use
+ */
+String readExecutionEnvironment() {
+    if (project.hasProperty("env")) {
+        return project.property("env")
+    }
+
+    if (System.getenv("env")) {
+        return System.getenv("env")
+    }
+
+    return "staging-native"
+}
+
+/**
+ * Helper method for overriding some framework properties. The order of resolving goes as follows:
+ *    * -PvarName=XXX param to gradlew, OR
+ *    * 'varName=XXX' environment variable, OR
+ *    * defaultValue
+ * Example usage:
+ *
+ *      readPropertyOverride("mobile", "webdriver.browser.mobile", null)
+ *
+ * The above result in returning ["webdriver.browser.mobile": "true"] if there's -Pmobile=true or
+ * environment variable of mobile=true is found. If not, the `null` above will cause the method to
+ * return empty map (i.e. the EnvironmentConfig in test scope will not override the value from file)
+ *
+ * @param projectPropOrEnvVarName name of -P param or environment variable to use
+ * @param sysPropToInject name of system property key to return, to be used later when building
+ *        the EnvironmentConfig
+ * @param defaultValue default value if neither -P nor env variable is found. If found to be null,
+ *        the method will return empty map, so nothing is overridden
+ * @return Map with key-value to be passed as system property
+ */
+Map<String, String> readPropertyOverride(String projectPropOrEnvVarName, String sysPropToInject, String defaultValue) {
+    String value = defaultValue
+
+    if (System.getenv(projectPropOrEnvVarName)) {
+        value = System.getenv(projectPropOrEnvVarName)
+    }
+
+    if (project.hasProperty(projectPropOrEnvVarName)) {
+        value = project.property(projectPropOrEnvVarName)
+    }
+
+    if (value) {
+        return [(sysPropToInject): value]
+    } else {
+        return [:]
+    }
+}
+
+// Selenoid configuration
+
+def homePath = System.properties['user.home']
+
+// to make it possible to use our own browsers.json configuration, we need to pass it into .aerokube/selenoid dir
+// related to ./cm issue - https://github.com/aerokube/cm/issues/279
+task copyBrowsersJson(type: Copy) {
+    from file("$rootDir/browsers.json")
+    into file("$homePath/.aerokube/selenoid")
+}
+
+task downloadCm(type: Exec, group: Selenoid) {
+    onlyIf { needSelenoid() && !file("./cm").exists() }
+    // TODO: rework into native docker/k8s API usage within DEVOPS-1361 DEVOPS-1513
+    commandLine('bash', '-c', 'curl -s https://aerokube.com/cm/bash | bash')
+    doFirst {
+        println("> Aerokube configuration management tool not found, downloading `cm`...")
+    }
+}
+
+task stopSelenoid(type: Exec, group: Selenoid) {
+    onlyIf { needSelenoid() }
+    dependsOn downloadCm
+
+    commandLine('./cm', 'selenoid', 'stop')
+    doFirst {
+        println("> Stopping Selenoid...")
+    }
+}
+
+task startSelenoid(type: Exec, group: Selenoid) {
+    onlyIf { needSelenoid() }
+    dependsOn stopSelenoid
+    dependsOn copyBrowsersJson
+
+    commandLine('./cm', 'selenoid', 'start', '--vnc', '--tmpfs', '128', '--browsers-json', 'browsers.json')
+    doFirst {
+        println("> Starting Selenoid...")
+    }
+}
+
+def validateMoon() {
+    int moonSessionCount = (System.getenv("moonSessionCount") ?: "0").toInteger()
+
+    if (moonSessionCount < 0) {
+        throw new GradleException("The 'moonSessionCount' param cannot be of negative value")
+    }
+
+    if (needMoon() && !moonSessionCount) {
+        throw new GradleException("When 'webdriver.type' is set to MOON, the pipeline job must set " +
+                "'moonSessionCount' to value bigger than 0, so proper queue handling is done")
+    }
+
+    if (!needMoon() && moonSessionCount) {
+        throw new GradleException("When pipeline sets 'moonSessionCount' to value bigger than 0, " +
+                "'webdriver.type' is expected to be set to MOON, so queue is not held unnecessarily")
+    }
+}
+
+boolean needSelenoid() {
+    return (frameworkProperties.getProperty("webdriver.type") == "SELENOID")
+}
+
+boolean needMoon() {
+    return (frameworkProperties.getProperty("webdriver.type") == "MOON")
+}
+
+tasks.withType(JavaCompile) {
+    options.deprecation = true
+}
+
+tasks.withType(Test) {
+    group "test"
+    dependsOn clean
+    useJUnitPlatform()
+
+    // Configure logging
+    systemProperty 'java.util.logging.config.file', "./logging-test.properties"
+    testLogging.showStandardStreams = true
+
+    // opt out of Allure's analytics
+    environment "ALLURE_NO_ANALYTICS", "1"
+
+    // pass required execution environment to test scope via environment variable
+    environment "executionEnvironment", readExecutionEnvironment()
+
+    // Pass selected -P properties or env vars to properties in test scope, i.e. override any of the
+    // {executionEnvironment}.properties values. The `EnvironmentConfig` takes this as an override
+    systemProperties readPropertyOverride("mobile", "webdriver.browser.mobile", null)
+    systemProperties readPropertyOverride("timeout", "selenide.element.timeout", null)
+    systemProperties readPropertyOverride("heavyTimeout", "selenide.element.heavyPagesTimeout", null)
+    // as an ex. -Pbrowser=firefox -PbrowserVersion=83
+    systemProperties readPropertyOverride("browser", "webdriver.browser.name", null)
+    systemProperties readPropertyOverride("browserVersion", "webdriver.browser.version", null)
+
+    if (needSelenoid()) {
+        dependsOn startSelenoid
+    }
+
+    testLogging {
+        events "started", "passed", "skipped", "failed"
+    }
+
+    retry {
+        failOnPassedAfterRetry = false
+        maxFailures = readMaxFailuresForRetry()
+        maxRetries = readRetries()
+    }
+}
+
+
+/**
+ * To enable test-retry feature, run the tests with -PmaxRetries=N in gradle cmd,
+ * where N is the maximum retry count.
+ */
+def readRetries() {
+    def maxRetries = project.findProperty('maxRetries') as String
+    return Integer.valueOf(maxRetries ?: "0")
+}
+
+/**
+ * If there are multiple test fails, it might mean that there's a bigger issue, so
+ * there's no point to retry. To override default value use -PmaxFailuresForRetry=N.
+ */
+def readMaxFailuresForRetry() {
+    def maxFailures = project.findProperty('maxFailuresForRetry') as String
+    return Integer.valueOf(maxFailures ?: "42")
+}
+
+// Test tasks definitions moved into 'tests.gradle' file
+apply from: rootProject.file('gradle/tests.gradle')
+

@@ -1,0 +1,326 @@
+task allureAfterTest(type: Test) {
+    // The name may look weird, but the goal is to have this on the top in IntelliJ "run" icon
+    description("Runs 'test' task, then runs 'allureServe'")
+    useJUnitPlatform()
+    finalizedBy("allureServe")
+}
+
+task productionTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'productionTest'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task regressionTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'regression'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task frameworkTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'framework'
+        excludeTags 'OnDemand'
+    }
+}
+
+task controlMoneyTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'control-money'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task caseManagementTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'case-management-dashboard'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task correspondentOnBoardingLiveTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'correspondent-onboarding-live'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task legacyPaymentsTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'wr-payments-webapp'
+        excludeTags 'OnDemand'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+// -- Loyalty Admin tasks
+task loyaltyAdminTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'loyalty-admin'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+// -- Artemis tasks
+
+task artemisTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'artemis'
+        excludeTags 'OnDemand'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'productionTest'
+    }
+}
+
+task artemisPostDeploymentHealthCheck(type: Test) {
+    useJUnitPlatform {
+        includeTags 'artemis & healthcheck'
+        excludeTags 'OnDemand'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task operationsManagementMoonSupportedTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'operations-management'
+        excludeTags 'framework | example'
+        excludeTags 'not-supported-by-moon'
+        excludeTags 'operations-management-rbac'
+    }
+}
+
+task operationsManagementRbacTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'operations-management & operations-management-rbac'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task operationsManagementMoonNotSupportedTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'operations-management & not-supported-by-moon'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task productionArtemisSmokeTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'artemis & productionTest & smoke'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'OnDemand'
+    }
+}
+
+// -- Nh-Template task
+
+task nhTemplateUiTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'nh-template-ui'
+        excludeTags 'OnDemand'
+        excludeTags 'framework'
+    }
+}
+
+// -- CMS tasks
+
+task cmsSandboxTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'cms & sandbox'
+        excludeTags 'framework | example'
+    }
+}
+
+
+task cmsTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'cms'
+        excludeTags 'OnDemand'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task cmsSmokeTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'cms & smoke'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task cmsFullRegressionTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'cms'
+        includeTags 'regression'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'productionTest'
+    }
+}
+
+task cmsPostDeploymentHealthCheck(type: Test) {
+    useJUnitPlatform {
+        includeTags 'cms & healthcheck'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'productionTest'
+    }
+}
+
+task productionCmsPostDeploymentHealthCheck(type: Test) {
+    useJUnitPlatform {
+        includeTags 'cms & healthcheck & productionTest'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+// -- Plutus tasks
+
+task plutusSandboxTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'plutus & sandbox'
+        excludeTags 'framework | example'
+    }
+}
+
+
+task plutusTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'plutus'
+        excludeTags 'OnDemand'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'productionTest'
+    }
+}
+
+task plutusPostDeploymentHealthCheck(type: Test) {
+    useJUnitPlatform {
+        includeTags 'plutus & healthcheck'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'productionTest'
+        excludeTags 'OnDemand'
+    }
+}
+
+task productionPlutusSmokeTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'plutus & productionTest & smoke'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'OnDemand'
+    }
+}
+
+task productionPlutusE2eProductionPostDeploymentCheck(type: Test) {
+    useJUnitPlatform {
+        includeTags 'plutus & productionTest & healthcheck'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task successfulTransferCheck(type: Test) {
+    filter {
+        includeTestsMatching "TransactionTest.userCanTransferMoneyUsing*"
+    }
+}
+
+// -- payments-integrations-webapp tasks
+
+task paymentsIntegrationsWebappTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'payments-integrations-webapp'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task paymentsIntegrationsWebappPostDeploymentHealthCheck(type: Test) {
+    useJUnitPlatform {
+        includeTags 'payments-integrations-webapp & healthcheck'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+// -- wr-payments-webapp tasks
+
+task wrPaymentsWebappTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'wr-payments-webapp'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'OnDemand'
+    }
+}
+
+task wrPaymentsWebappPostDeploymentHealthCheck(type: Test) {
+    useJUnitPlatform {
+        includeTags 'wr-payments-webapp & healthcheck'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+        excludeTags 'OnDemand'
+    }
+}
+
+task productionWrPaymentsWebappSmokeTest(type: Test) {
+    filter {
+        includeTestsMatching "ProductionWrPaymentsWebappSmokeTest"
+    }
+}
+
+// -- xenia
+task xeniaTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'xenia'
+        excludeTags 'OnDemand'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task xeniaSandboxTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'xenia & sandbox'
+        excludeTags 'framework | example'
+    }
+}
+
+task correspondentPortalTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'correspondent-portal'
+        excludeTags 'framework | example'
+    }
+}
+
+// -- web-processes tasks
+task webProcessesTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'web-processes'
+        excludeTags 'framework | example'
+        excludeTags 'sandbox'
+    }
+}
+
+task webProcessesSmokeTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'web-processes & smoke'
+    }
+}
