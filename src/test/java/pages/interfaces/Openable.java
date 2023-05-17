@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 import static io.qameta.allure.Allure.step;
 import static matchers.IsOpened.isOpened;
 import static matchers.WrMatcherAssert.assertThat;
+import static uri.UriManager.compareUris;
+import static uri.UriManager.getOpenedUri;
 
 public interface Openable extends Nameable {
 

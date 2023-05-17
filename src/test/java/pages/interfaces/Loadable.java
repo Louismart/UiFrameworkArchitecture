@@ -1,8 +1,10 @@
 package pages.interfaces;
 
+import exception.WrongFrameworkUsageException;
 import lombok.SneakyThrows;
-
 import java.util.Optional;
+
+import static io.qameta.allure.Allure.step;
 
 public interface Loadable extends Nameable {
 

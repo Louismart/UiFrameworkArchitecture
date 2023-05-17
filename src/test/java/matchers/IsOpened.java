@@ -9,7 +9,6 @@ import lombok.val;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import pages.interfaces.Openable;
-
 import java.net.URI;
 import java.util.List;
 
@@ -17,6 +16,8 @@ import static configuration.EnvironmentConfig.ENVIRONMENT_CONFIG;
 import static io.qameta.allure.Allure.step;
 import static java.util.Objects.isNull;
 import static srings.StringManipulationManager.formatAsHumanReadableList;
+import static uri.UriManager.compareUris;
+import static uri.UriManager.getOpenedUri;
 
 /**
  * This is custom hamcrest matcher that is used to check whether or not the correct page is open. See IsOpened.opened
@@ -110,7 +111,8 @@ public class IsOpened extends TypeSafeMatcher<Openable> {
          *
          */
         @Override
-        protected void describeMismatchSafely(){
+        @SneakyThrows
+        protected void describeMismatchSafely(Openable assertedPage, Description mismatchDescription){
             mismatchDescription.appendText("was wrong URL: ").appendText(openedUri.toURL().toString());
         }
 
@@ -152,6 +154,6 @@ public class IsOpened extends TypeSafeMatcher<Openable> {
             }
             while (!stopwatch.isTimeoutReached());
             return false;
-        }
+
     }
 }
