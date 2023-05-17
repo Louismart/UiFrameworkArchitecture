@@ -1,4 +1,4 @@
-package com.worldremit.test.web.pages;
+package pages;
 
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.visible;
@@ -18,7 +18,6 @@ import configuration.EnvironmentConfig;
 import exception.EnvironmentError;
 import exception.NonexistentValueException;
 import exception.WrongFrameworkUsageException;
-import models.codes.CountryCodesGetter;
 import models.codes.TranslationLanguage;
 import models.codes.gtm.DataLayer;
 import models.codes.gtm.DataLayerPage;
