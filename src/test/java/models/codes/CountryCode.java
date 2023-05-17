@@ -2,6 +2,7 @@ package models.codes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.val;
+import mappers.CountryCodeDeserializer;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -89,7 +90,7 @@ import static java.lang.String.format;
  *
  * @author Takahiko Kawasaki
  */
-@JsonDeserialize(using = com.worldremit.test.web.services.mappers.CountryCodeDeserializer.class)
+@JsonDeserialize(using = CountryCodeDeserializer.class)
 public enum CountryCode {
 
     /**

@@ -1,0 +1,107 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plutus
+spec:
+  selector:
+    app: plutus
+  type: ClusterIP
+  ports:
+    - name: application
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plutus
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: plutus
+  template:
+    metadata:
+      labels:
+        app: plutus
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      terminationGracePeriodSeconds: 3
+      initContainers:
+        - name: redis-readiness-probe
+          image: busybox:latest
+          command:
+            - timeout
+            - "10"
+            - sh
+            - -c
+            - 'until nc -z -w 1 redis 6379; do echo "Waiting for redis..."; done'
+        - name: dns-proxy-redirect
+          image: istio/proxyv2:1.6.7
+          command:
+            - bash
+            - -c
+            - 'while [[ -z $(getent hosts dns-proxy) ]]; do echo "Waiting for dns-proxy..."; sleep 1; done; set -xe; iptables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to $(getent hosts dns-proxy | cut -f1 -d" "):53 && iptables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to $(getent hosts dns-proxy | cut -f1 -d" "):53'
+          securityContext:
+            runAsUser: 0
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
+              drop:
+                - ALL
+      containers:
+        - name: plutus
+          env:
+            - name: SANDBOX_UUID
+              value: "sandbox-unique-id"
+            - name: MOCK_ENV # Required to connect to Redis session store without TLS
+              value: 'true'
+            - name: CUSTOM_CONFIGURATION_PATH
+              value: /etc/app/config/settings
+          image: 628232394424.dkr.ecr.eu-central-1.amazonaws.com/plutus:prd
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /plutus/healthcheck/status
+              port: 3000
+              httpHeaders:
+                - name: "Cookie"
+                  value: "connect.sid=s%3Aweb-sandbox-probe.I3G0ZwNwAp%2Bk8YlQ5H3VbrRWfeJJKK4VrTHPIyANbYw"
+            failureThreshold: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /plutus/healthcheck/status
+              port: 3000
+              httpHeaders:
+                - name: "Cookie"
+                  value: "connect.sid=s%3Aweb-sandbox-probe.I3G0ZwNwAp%2Bk8YlQ5H3VbrRWfeJJKK4VrTHPIyANbYw"
+            failureThreshold: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
+          volumeMounts:
+            - name: plutus-cfg
+              mountPath: /etc/app/config
+              readOnly: true
+          envFrom:
+            - secretRef:
+                name: sandbox-secrets
+            - secretRef:
+                name: sandbox-not-so-secrets
+      volumes:
+        - name: plutus-cfg
+          secret:
+            secretName: plutus-cfg

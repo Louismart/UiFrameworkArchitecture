@@ -1,0 +1,448 @@
+{
+  "app": {
+    "name": "plutus",
+    "url": "http://web-proxy/"
+  },
+  "api": {
+    "url": "http://legacy-api-mock:9000/api/"
+  },
+  "gateway": {
+    "url": "http://legacy-api-mock:9000/"
+  },
+  "google": {
+    "analyticsId": "",
+    "tagManagerId": "",
+    "tagManagerAuth": "",
+    "tagManagerPreview": ""
+  },
+  "branch": {
+    "key": ""
+  },
+  "mercury": {
+    "url": "http://mercury-mock:9001/"
+  },
+  "redis": {
+    "host": "redis",
+    "port": "6379",
+    "password": "redis-password"
+  },
+  "contentful": {
+    "baseUrl": "https://cdn.contentful.com",
+    "spaceId": "THIS WILL BE REPLACED BY ENV",
+    "environment": "master",
+    "accessToken": "THIS WILL BE REPLACED BY ENV"
+  },
+  "contentfulCMS": {
+    "baseUrl": "https://cdn.contentful.com",
+    "spaceId": "THIS WILL BE REPLACED BY ENV",
+    "environment": "wremittst",
+    "accessToken": "THIS WILL BE REPLACED BY ENV"
+  },
+  "sentry": {
+    "key": "",
+    "environment": ""
+  },
+  "snowplow": {
+    "appId": "",
+    "collector": "",
+    "namespace": ""
+  },
+  "session": {
+    "secret": [
+      "web-tests-seed",
+      "web-tests-seed-2"
+    ],
+    "timeoutInMilliseconds": 1200000,
+    "loginExpiryTimeInMinutes": 20,
+    "cookie": {
+      "secure": false
+    }
+  },
+  "showErrorDetails": true,
+  "logger": {
+    "console": {
+      "level": "info",
+      "colours": true
+    },
+    "azure": {
+      "level": "info",
+      "accountName": "",
+      "accessKey": "",
+      "tableName": ""
+    },
+    "rollover": {
+      "days": 1
+    }
+  },
+  "features": {
+    "cardSelectionPageLegacy": {
+      "enabled": false,
+      "tickets": [
+        "HS-977"
+      ]
+    },
+    "webRelaunch": {
+      "enabled": true,
+      "tickets": [
+        "HS-979"
+      ]
+    },
+    "sendAppInterop": {
+      "enabled": true,
+      "tickets": []
+    },
+    "optimizely": {
+      "enabled": true,
+      "tickets": []
+    },
+    "ipqs": {
+      "enabled": true,
+      "tickets": []
+    },
+    "perimeterX": {
+      "enabled": true,
+      "tickets": []
+    },
+    "sentry": {
+      "enabled": false,
+      "tickets": []
+    },
+    "snowplow": {
+      "enabled": true,
+      "tickets": []
+    },
+    "branch": {
+      "enabled": true,
+      "tickets": []
+    },
+    "gtm": {
+      "enabled": true,
+      "tickets": []
+    },
+    "appdMetrics": {
+      "enabled": true,
+      "tickets": []
+    },
+    "airtimeNew": {
+      "enabled": true,
+      "tickets": []
+    },
+    "transaction": {
+      "enabled": true,
+      "tickets": []
+    },
+    "languageDA": {
+      "enabled": true,
+      "tickets": []
+    },
+    "languageDE": {
+      "enabled": true,
+      "tickets": []
+    },
+    "languageNL": {
+      "enabled": true,
+      "tickets": []
+    },
+    "signup": {
+      "enabled": true,
+      "tickets": []
+    },
+    "promoBox": {
+      "enabled": true,
+      "tickets": []
+    },
+    "bcrypt": {
+      "enabled": true,
+      "tickets": []
+    },
+    "moneyTransfer": {
+      "enabled": true,
+      "tickets": []
+    },
+    "newBankTransferFlow": {
+      "enabled": true,
+      "tickets": []
+    },
+    "brexit": {
+      "enabled": true,
+      "countries": [
+        "at",
+        "be",
+        "bg",
+        "hr",
+        "cy",
+        "cz",
+        "dk",
+        "ee",
+        "fi",
+        "fr",
+        "de",
+        "gr",
+        "hu",
+        "is",
+        "ie",
+        "it",
+        "lv",
+        "li",
+        "lt",
+        "lu",
+        "mt",
+        "nl",
+        "no",
+        "pl",
+        "pt",
+        "ro",
+        "sk",
+        "si",
+        "es",
+        "se"
+      ]
+    },
+    "specialOffer": {
+      "enabled": true,
+      "countries": [
+        "AU",
+        "AT",
+        "BE",
+        "BG",
+        "CM",
+        "CA",
+        "HR",
+        "CY",
+        "CZ",
+        "DK",
+        "EE",
+        "FI",
+        "FR",
+        "DE",
+        "GI",
+        "GR",
+        "HK",
+        "HU",
+        "IS",
+        "IE",
+        "IT",
+        "JP",
+        "LV",
+        "LT",
+        "LU",
+        "MY",
+        "MT",
+        "NL",
+        "NZ",
+        "NO",
+        "PH",
+        "PL",
+        "PT",
+        "RO",
+        "SG",
+        "SK",
+        "SI",
+        "SO",
+        "ZA",
+        "ES",
+        "SE",
+        "CH",
+        "UG",
+        "UK",
+        "GB",
+        "US"
+      ]
+    },
+    "highestFeeDefault": {
+      "enabled": true,
+      "countries": [
+        "us"
+      ]
+    },
+    "businessSignup": {
+      "enabled": false,
+      "tickets": []
+    },
+    "useTransferDispatcher": {
+      "enabled": true,
+      "tickets": []
+    },
+    "newPricing": {
+      "enabled": true,
+      "tickets": []
+    },
+    "newPricingPromoCode": {
+      "enabled": true,
+      "tickets": []
+    },
+    "enableBraze": {
+      "enabled": true,
+      "tickets": []
+    },
+    "automaticAirtimeRecipient": {
+      "enabled": false,
+      "tickets": []
+    },
+    "expectedDeliveryTime": {
+      "enabled": false,
+      "tickets": [
+        "PAYM-143",
+        "PAYM-460"
+      ]
+    },
+    "newHeaderLogo": {
+      "enabled": true,
+      "tickets": [
+        "PAYM-349"
+      ]
+    },
+    "threatMetrix": {
+      "enabled": true,
+      "tickets": []
+    },
+    "onfidoVerficationOnFirstTransaction": {
+      "enabled": false,
+      "tickets": [
+        "KYC-38"
+      ]
+    },
+    "addressLookup": {
+      "enabled": false,
+      "tickets": [
+        "ACQ-1614"
+      ]
+    },
+    "loginWithOutSendapp": {
+      "enabled": false,
+      "tickets": [
+        "HSUK-236"
+      ]
+    },
+    "signUpWithOutSendapp": {
+      "enabled": false,
+      "tickets": [
+        "HSUK-236"
+      ]
+    },
+    "consolidateCalculationData": {
+      "enabled": false,
+      "tickets": [
+        "HSUK-410"
+      ]
+    },
+    "preselectRecipient": {
+      "enabled": true,
+      "tickets": [
+        "RC-1467"
+      ]
+    },
+    "creditCardWarning": {
+      "enabled": true,
+      "tickets": [
+        "PAY-579"
+      ]
+    },
+    "requestMoneySaveTransfer": {
+      "enabled": true,
+      "tickets": [
+        "RC-1546"
+      ]
+    },
+    "forgottenPassword": {
+      "enabled": true,
+      "tickets": [
+        "HSUK-761"
+      ]
+    },
+    "skipPaymentSelectionPage": {
+      "enabled": true,
+      "tickets": [
+        "HSUK-165"
+      ],
+      "countries": [
+        "MY"
+      ]
+    },
+    "mfa": {
+      "enabled": true,
+      "tickets": []
+    },
+    "localizedSignupRedirection": {
+      "enabled": false,
+      "tickets": [
+        "CONWEB-880"
+      ]
+    },
+    "phoneNumberVerification": {
+      "enabled": false,
+      "tickets": [
+        "II-710"
+      ]
+    },
+    "addressLookupFromUIPatterns": {
+      "enabled": false,
+      "tickets": [
+        "MCON-395"
+      ]
+    },
+    "dynamicFormRenderer": {
+      "enabled": false,
+      "tickets": [
+        "MCON-370"
+      ],
+      "countries": [
+      ]
+    }
+  },
+  "reduxDebugging": false,
+  "optimizely": {
+    "id": "10521172784"
+  },
+  "metrics": {
+    "appKey": "",
+    "urlHttp": "",
+    "urlAdrumJs": ""
+  },
+  "ipqs": {
+    "script": "",
+    "noscript": ""
+  },
+  "calculationWithoutLogin": false,
+  "braze": {
+    "apiKey": "",
+    "baseUrl": "",
+    "enableLogging": true
+  },
+  "perimeterX": {
+    "jsClientSrc": "",
+    "firstPartyEnabled": true,
+    "scriptSrc": "",
+    "appId": "",
+    "captchaTheme": "light"
+  },
+  "tmxSession": {
+    "url": "",
+    "orgId": ""
+  },
+  "sourceMaps": false,
+  "apiVersions": {
+    "rewrite": {
+      "transaction": {
+        "dispatchDecision": 1,
+        "transferDispatch": 1,
+        "submitTransfer": 3,
+        "submitTransferToAirtimePurchase": 1
+      },
+      "calculation": {
+        "getCalculation": 1,
+        "getCalculationWithPromoCode": 1
+      }
+    },
+    "legacy": {
+      "postTransaction": 1
+    }
+  },
+  "countriesWithBankIban": [
+    "ci",
+    "sn",
+    "tg",
+    "bj",
+    "bf"
+  ]
+}
