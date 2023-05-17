@@ -1,0 +1,95 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-mocks
+spec:
+  selector:
+    app: web-tests
+  type: ClusterIP
+  ports:
+    - name: application
+      protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-tests
+spec:
+  selector:
+    matchLabels:
+      app: web-tests
+  template:
+    metadata:
+      labels:
+        app: web-tests
+        sandbox-entrypoint/pre-test: "web-tests"
+        sandbox-entrypoint/test: "web-tests"
+        sandbox-entrypoint/post-test: "web-tests"
+        sandbox-reports/html: "web-tests"
+        sandbox-reports/allure: "web-tests"
+    spec:
+      terminationGracePeriodSeconds: 3
+      initContainers:
+        - name: dns-proxy-redirect
+          image: istio/proxyv2:1.6.7
+          command:
+            - bash
+            - -c
+            - 'while [[ -z $(getent hosts dns-proxy) ]]; do echo "Waiting for dns-proxy..."; sleep 1; done; set -xe; iptables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to $(getent hosts dns-proxy | cut -f1 -d" "):53 && iptables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to $(getent hosts dns-proxy | cut -f1 -d" "):53'
+          securityContext:
+            runAsUser: 0
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
+              drop:
+                - ALL
+      containers:
+        - name: web-tests
+          image: 628232394424.dkr.ecr.eu-central-1.amazonaws.com/web-tests:master
+          imagePullPolicy: Always
+          tty: true
+          workingDir: /sandbox/scripts
+          command:
+            - cat
+          resources:
+            requests:
+              cpu: '1'
+              memory: '2Gi'
+            limits:
+              cpu: '8'
+              memory: '6Gi'
+          volumeMounts:
+            - mountPath: /sandbox/scripts
+              name: scripts
+            - mountPath: /dev/shm
+              name: shm
+          env:
+            - name: SANDBOX_UUID
+              value: "sandbox-unique-id"
+          envFrom:
+            - configMapRef:
+                name: sandbox-environments
+            - secretRef:
+                name: sandbox-secrets
+      volumes:
+        - name: scripts
+          configMap:
+            name: scripts
+            defaultMode: 0744
+        - name: shm # POSIX Shared Memory for Chromium
+          emptyDir:
+            medium: Memory
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: web-tests
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: web-tests
