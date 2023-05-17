@@ -1,11 +1,7 @@
 package pages.interfaces;
-
 import com.codeborne.selenide.SelenideElement;
-import com.worldremit.test.web.models.TranslationLanguage;
-import com.worldremit.test.web.models.codes.CountryCode;
-import com.worldremit.test.web.pages.interfaces.Loadable;
 import models.codes.CountryCode;
-import models.codes.TransactionLanguage;
+import models.codes.TranslationLanguage;
 
 public interface HeaderInterface extends Loadable {
 
@@ -13,11 +9,11 @@ public interface HeaderInterface extends Loadable {
 
     void selectSendFromCountry(CountryCode countryCode);
 
-    TransactionLanguage getSelectedLanguage();
+    TranslationLanguage getSelectedLanguage();
 
     CountryCode getSelectedSendFromCountry();
 
-    void selectLanguage(TransactionLanguage translationLanguage);
+    void selectLanguage(TranslationLanguage translationLanguage);
 
     void clickMainLogo();
 

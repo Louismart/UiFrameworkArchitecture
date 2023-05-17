@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static framework.collectors.WrCollectors.onlyOne;
+
 public class CountryCodesGetter {
     public static CountryCode getCountryCode(String codeOrCountryName) {
         CountryCode codeToReturn;
@@ -17,7 +19,7 @@ public class CountryCodesGetter {
             codeToReturn = CountryCode
                     .findByName(Pattern.compile("^" + codeOrCountryName + "$", Pattern.CASE_INSENSITIVE))
                     .stream()
-                    .filter(code -> !code.getAssignment().equals(CountryCode.Assignment.NOT_IN_WORLDREMIT))
+                    .filter(code -> !code.getAssignment().equals(CountryCode.Assignment.NOT_IN_OUR_ENTITY))
                     .collect(onlyOne(String.format("Country Code matching '%s'", codeOrCountryName)));
         }
         return Optional.ofNullable(codeToReturn)

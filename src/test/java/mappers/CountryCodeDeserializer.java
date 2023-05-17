@@ -1,14 +1,14 @@
-package com.worldremit.test.web.services.mappers;
+package mappers;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.worldremit.test.web.models.codes.CountryCode;
-import com.worldremit.test.web.models.codes.CountryCodesGetter;
 import java.io.IOException;
 import java.util.Objects;
 import lombok.val;
+import models.codes.CountryCode;
+import models.codes.CountryCodesGetter;
 
 public class CountryCodeDeserializer extends StdDeserializer<CountryCode> {
 

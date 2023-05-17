@@ -8,9 +8,8 @@ import lombok.SneakyThrows;
 import lombok.val;
 import mappers.ApiObjectMappers;
 import models.codes.gtm.DataLayer;
-
+import srings.StringManipulationManager;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -102,7 +101,7 @@ public class WrCollectors {
 
     /**
      * Collects stream into human readable String
-     * @see StringManipulationManager#formatAsHumanReadableList(List, String)
+     *
      */
     public static <T> Collector<T, ?, T> toHumanReadableList(String lastItemSeparator) {
         return (Collector<T, ?, T>) Collectors.collectingAndThen(

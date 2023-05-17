@@ -5,9 +5,7 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.url;
-import static com.worldremit.test.web.browser.CookieManager.getCookie;
-import static com.worldremit.test.web.browser.CookieManager.getWrCookie;
-import static com.worldremit.test.web.configuration.EnvironmentConfig.ENVIRONMENT_CONFIG;
+import static configuration.EnvironmentConfig.ENVIRONMENT_CONFIG;
 import static io.qameta.allure.Allure.step;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
@@ -16,24 +14,18 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.ex.ElementNotFound;
 import com.google.common.collect.Streams;
-import com.worldremit.test.web.configuration.EnvironmentConfig;
-import com.worldremit.test.web.exceptions.EnvironmentError;
-import com.worldremit.test.web.exceptions.NonexistentValueException;
-import com.worldremit.test.web.exceptions.WrongFrameworkUsageException;
-import com.worldremit.test.web.models.LocalizationRegion;
-import com.worldremit.test.web.models.TranslationLanguage;
-import com.worldremit.test.web.models.codes.CountryCodesGetter;
-import com.worldremit.test.web.models.cookies.ConnectSid;
-import com.worldremit.test.web.models.cookies.SelectFrom;
-import com.worldremit.test.web.models.gtm.DataLayer;
-import com.worldremit.test.web.models.gtm.DataLayer.DataLayerBuilder;
-import com.worldremit.test.web.models.gtm.DataLayerPage;
-import com.worldremit.test.web.pages.components.Header;
+import configuration.EnvironmentConfig;
+import exception.EnvironmentError;
+import exception.NonexistentValueException;
+import exception.WrongFrameworkUsageException;
+import models.codes.CountryCodesGetter;
+import models.codes.TranslationLanguage;
+import models.codes.gtm.DataLayer;
+import models.codes.gtm.DataLayerPage;
+import pages.components.Header;
+import pages.interfaces.Bundleable;
+import pages.interfaces.ExpectedElements;
 import pages.interfaces.HeaderInterface;
-import com.worldremit.test.web.pages.interfaces.Bundleable;
-import com.worldremit.test.web.pages.interfaces.ExpectedElements;
-import com.worldremit.test.web.pages.interfaces.Page;
-import com.worldremit.test.web.services.BffService;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -52,6 +44,7 @@ import lombok.val;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.By;
+import pages.interfaces.Page;
 
 @Slf4j
 @SuperBuilder(toBuilder = true)
@@ -75,9 +68,8 @@ public abstract class BasePage implements Page, DataLayerPage, Bundleable {
     @Getter
     @Default
     private final TranslationLanguage pageLanguage = ENVIRONMENT_CONFIG.getLanguage();
-    @Getter
-    @Default
-    private final LocalizationRegion localizationRegion = null;
+
+
     @Singular
     @Getter
     private final List<NameValuePair> uriParams;
@@ -224,9 +216,6 @@ public abstract class BasePage implements Page, DataLayerPage, Bundleable {
         if (getPageLanguage() != null) {
             urlSegments.add(0, getPageLanguage().getCode());
         }
-        if (getLocalizationRegion() != null) {
-            urlSegments.set(0, getLocalizationRegion().getCode().toLowerCase());
-        }
         uriBuilder.setPathSegments(urlSegments);
         uriBuilder.setFragment(getUriFragment());
         uriBuilder.addParameters(getUriParams());
@@ -238,7 +227,7 @@ public abstract class BasePage implements Page, DataLayerPage, Bundleable {
      * Child objects should override this method, call super and add any additional DataLayer
      * fields that are expected on given page.
      */
-    protected DataLayerBuilder getDataLayerBuilder() {
+    protected DataLayer.DataLayerBuilder getDataLayerBuilder() {
         val header = getHeader();
         this.waitUntilLoaded();
         if (Objects.isNull(getMandatoryDataLayer())) {
@@ -254,16 +243,6 @@ public abstract class BasePage implements Page, DataLayerPage, Bundleable {
         if (Objects.nonNull(header)) {
             header.waitUntilLoaded();
             dataLayerBuilder.visitorStatus(header.isLoggedIn() ? "logged in" : "not logged in");
-            if (header.isLoggedIn()) {
-                // NOTE: this uses BFF, so it might be effected by the same bug as CMS itself
-                val bffService = BffService.getBffService();
-                val userAccount = bffService.getAccount(getCookie(ConnectSid.class));
-                dataLayerBuilder.userAccount(userAccount);
-            }
-            // Fetch senderCountry from cookie instead of header dropdown, so it's faster
-            val senderCountry = CountryCodesGetter.getCountryCode(getWrCookie(SelectFrom.class).getValue());
-            dataLayerBuilder.senderCountry(senderCountry);
-            dataLayerBuilder.senderCountryIso(senderCountry);
         }
         return dataLayerBuilder;
     }

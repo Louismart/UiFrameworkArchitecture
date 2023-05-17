@@ -1,15 +1,16 @@
 package models.codes.gtm;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
 import java.util.Arrays;
+
+import static framework.collectors.WrCollectors.onlyOne;
 
 @RequiredArgsConstructor
 @Getter
 public enum PageType {
-    // source: https://worldremit.atlassian.net/browse/WR-531
+
     HOMEPAGE("homepage"),
     PROMO_MESSAGE("promo message"),
     COUNTRY("country"),

@@ -16,7 +16,7 @@ import static framework.collectors.WrCollectors.onlyOne;
 @Getter
 @RequiredArgsConstructor
 @JsonDeserialize
-public enum TransactionLanguage {
+public enum TranslationLanguage {
         DANISH("da", Locale.forLanguageTag("da-DA"), "Dansk"),
         DUTCH("nl", Locale.forLanguageTag("nl-NL"), "Nederlands"),
         ENGLISH("en", Locale.UK, "English"),
@@ -32,20 +32,20 @@ public enum TransactionLanguage {
             return this.toString().toLowerCase();
         }
 
-        public static TransactionLanguage fromName(String languageStr) {
-            return Arrays.stream(TransactionLanguage.values())
+        public static TranslationLanguage fromName(String languageStr) {
+            return Arrays.stream(TranslationLanguage.values())
                     .filter(value -> value.getFullName().equals(languageStr))
                     .collect(onlyOne(String.format("TranslationLanguage enum of '%s'", languageStr)));
         }
 
-        public static TransactionLanguage fromCode(String languageCode) {
-            return Arrays.stream(TransactionLanguage.values())
+        public static TranslationLanguage fromCode(String languageCode) {
+            return Arrays.stream(TranslationLanguage.values())
                     .filter(value -> value.getCode().equals(languageCode))
                     .collect(onlyOne(String.format("TranslationLanguage enum for '%s'", languageCode)));
         }
 
-        public static TransactionLanguage find(String codeOrName) {
-            return Arrays.stream(TransactionLanguage.values())
+        public static TranslationLanguage find(String codeOrName) {
+            return Arrays.stream(TranslationLanguage.values())
                     .filter(value -> value.isMatching(codeOrName))
                     .collect(onlyOne(String.format("TranslationLanguage enum for '%s'", codeOrName)));
         }

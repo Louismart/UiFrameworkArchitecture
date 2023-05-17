@@ -1,11 +1,16 @@
 package pages.components;
 
+import static browser.Browser.scrollToTop;
+import static browser.Browser.waitForAnimationEndOf;
 import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
+import static configuration.EnvironmentConfig.getLongTimeout;
+import static configuration.EnvironmentConfig.isDesktop;
+import static framework.collectors.WrCollectors.onlyOne;
 import static io.qameta.allure.Allure.step;
 import static java.lang.String.format;
 import static models.codes.CountryCodesGetter.getCountryCode;
@@ -19,9 +24,10 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 import models.codes.CountryCode;
-import models.codes.TransactionLanguage;
+import models.codes.TranslationLanguage;
 import org.openqa.selenium.Keys;
 import pages.interfaces.HeaderInterface;
+import pages.interfaces.Viewable;
 
 /**
  *
@@ -76,19 +82,19 @@ public class Header implements HeaderInterface {
     }
 
     @Override
-    public TransactionLanguage getSelectedLanguage() {
+    public TranslationLanguage getSelectedLanguage() {
         waitUntilHeaderLoaded();
         if (!languageSelect.isDisplayed()) {
             expandHamburgerMenuIfNeeded();
         }
         val languageValue = languageSelect.getSelectedValue();
         closeHamburgerMenuIfNeeded();
-        return TransactionLanguage.fromCode(languageValue);
+        return TranslationLanguage.fromCode(languageValue);
     }
 
     @Override
     @Step("Select {0} language in header")
-    public void selectLanguage(TransactionLanguage translationLanguage) {
+    public void selectLanguage(TranslationLanguage translationLanguage) {
         waitUntilHeaderLoaded();
         if (!languageSelect.isDisplayed()) {
             expandHamburgerMenuIfNeeded();

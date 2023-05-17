@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.ToString;
 import lombok.Value;
-import lombok.val;
-
-import java.time.*;
+import models.codes.CountryCode;
+import models.codes.TranslationLanguage;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Objects;
         /* DataLayer representation. DO NOT use primitive types, so the fields can be set to null.
         */
 @Builder(toBuilder = true)
@@ -29,7 +27,7 @@ public class DataLayer {
             String visitorStatus;
             // Logged In - must be set for ALL pages if user is logged in
             String age;
-            Gender gender;
+            String gender;
             String lastTransferDate;
             String numTransfers;
             String customerId;
@@ -38,12 +36,12 @@ public class DataLayer {
             String transferTime;
             String exchangeRate;
             String feesFrom;
-            ServiceCode serviceType;
+      //      ServiceCode serviceType;
             CountryCode destinationCountry;
             CountryCode destinationCountryIso; // same as destinationCountry
             String countryCorridorIso; // populated from senderCountry and destinationCountry
             // For CLPs with send bands defined
-            Ecommerce ecommerce;
+
 
             // User interactions
             String dropdownName;
@@ -152,42 +150,7 @@ public class DataLayer {
                     return this;
                 }
 
-                public DataLayerBuilder userAccount(UserAccount userAccount) {
-                    val dateOfBirth = userAccount.getSender().getDateOfBirth();
-                    val gender = userAccount.getSender().getGender();
-                    if (Objects.isNull(dateOfBirth)) {
-                        this.age = "information not available";
-                    } else {
-                        this.age = Integer.toString(Period.between(dateOfBirth, LocalDate.now()).getYears());
-                    }
-                    if (Objects.isNull(gender)) {
-                        this.gender = Gender.UNAVAILABLE;
-                    } else {
-                        this.gender = userAccount.getSender().getGender();
-                    }
-                    this.lastTransferDate = calculateLastTransferDate(userAccount.getAllTransactions());
-                    this.numTransfers = userAccount.getAllTransactions() == null ? null : Integer.toString(userAccount.getAllTransactions().size());
-                    this.customerId = userAccount.getSender().getReferenceNumber();
-                    return this;
-                }
-
-                private String calculateLastTransferDate(List<Transfer> transfers) {
-                    if (transfers == null) {
-                        return NO_TRANSFERS_SIGNATURE;
-                    }
-                    return lastTransferDate = transfers.stream()
-                            .mapToInt(Transfer::getTimeStamp)
-                            .max()
-                            .stream()
-                            .mapToObj(Instant::ofEpochSecond)
-                            .map(instant -> instant.atZone(ZoneOffset.UTC))
-                            .map(ZonedDateTime::toLocalDate)
-                            .map(localDate -> localDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
-                            .findFirst()
-                            .orElse(NO_TRANSFERS_SIGNATURE);
-                }
             }
-        }
 
 
 }
